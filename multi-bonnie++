@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2011  2ndQuadrant Italia
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+
+##
+# CONFIGURATION
+##
+
+DISK=sdb
+BONNIE_CMD="bonnie++ -f -n 0 -u root"
+BONNIE_TMP=bonnie.tmp
+BONNIE_OUT=bonnie_result_total.html
+N=10
+SCHEDULERS="noop deadline cfq"
+
+##
+# END OF CONFIGURATION
+##
+
+set -e
+
+# Initial HTML code
+cat > ${BONNIE_OUT} << EOF
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                <script type="text/javascript">
+
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+function drawChart()
+{
+EOF
+
+for sched in ${SCHEDULERS}
+do
+	# Set scheduler
+	echo ${sched} > /sys/block/${DISK}/queue/scheduler
+
+        echo "var data_${sched} = google.visualization.arrayToDataTable([" >> ${BONNIE_OUT}
+        echo "['Run', 'Read K/s', 'Write K/s']," >> ${BONNIE_OUT}
+
+	# Run bonnie++ N times
+	for i in $( seq 1 $N )
+	do
+		${BONNIE_CMD} > ${BONNIE_TMP}
+		SEQ_READ=$( cat ${BONNIE_TMP} | tail -n 1 | cut -d ',' -f 16 )
+		SEQ_WRITE=$( cat ${BONNIE_TMP} | tail -n 1 | cut -d ',' -f 10 )
+		echo "['${i}', ${SEQ_READ}, ${SEQ_WRITE}]," >> ${BONNIE_OUT}
+	done
+	echo "]);" >> ${BONNIE_OUT}
+
+
+	cat >> ${BONNIE_OUT} << EOF
+        var options_${sched} = {
+                title: 'Bonnie++ results using scheduler ${sched}',
+                hAxis: {title: 'Run'}
+        };
+
+	var chart_${sched} = new google.visualization.AreaChart(document.getElementById('chart_div_${sched}'));
+        chart_${sched}.draw(data_${sched}, options_${sched});
+
+EOF
+done
+
+cat >> ${BONNIE_OUT} << EOF
+}
+                </script>
+        </head>
+        <body>
+                <h1>DELL PowerEdge r610</h1>
+                <p>Benchmark delle prestazioni del disco <strong>${DISK}</strong></p>
+EOF
+
+for sched in ${SCHEDULERS}
+do
+	echo "<div id='chart_div_${sched}' style='width: 900px; height: 500px;'></div>" >> ${BONNIE_OUT}
+done
+
+cat >> ${BONNIE_OUT} << EOF
+        </body>
+</html>
+EOF
+
+rm ${BONNIE_TMP}
+

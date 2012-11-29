@@ -1,0 +1,16 @@
+= multibonnie
+
+Bonnie++ is a gret benchmark to measure read and write capacity of your hard disk.
+
+With this script, you can execute bonnie++ n times, each n changing the scheduler.
+
+After the script finished, you will have a HTML file which contains a nice looking chart,
+made using Google Chart Tools.
+
+[IMPORTANT]
+You need a working Internet connection to see the resulting chart
+
+== Requirements
+
+* bonnie++
+
