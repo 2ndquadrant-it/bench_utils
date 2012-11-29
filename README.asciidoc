@@ -1,6 +1,6 @@
 = multibonnie
 
-Bonnie++ is a gret benchmark to measure read and write capacity of your hard disk.
+Bonnie++ is a gret benchmark tool to measure read and write capacity of your hard disk.
 
 With this script, you can execute bonnie++ n times, each n changing the scheduler.
 
