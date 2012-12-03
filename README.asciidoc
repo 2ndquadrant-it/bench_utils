@@ -5,8 +5,7 @@ utili quando si esegue il benchmark di un server per Postgres.
 
 == multibonnie
 
-Bonnie is a gret benchmark tool to measure read and write capacity of your hard disk.
-Bonnie è un ottimo strumento per benchmark, utile
+link:http://www.coker.com.au/bonnie++/[Bonnie] è un ottimo strumento per benchmark, utile
 a misurare la capacità di un disco per opearzioni di lettura
 e scrittura.
 
