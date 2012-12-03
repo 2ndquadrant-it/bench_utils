@@ -1,16 +1,26 @@
-= multibonnie
+= Bench Utils
+
+Questo repository raccoglie alcuni script di utilità che possono tornare
+utili quando si esegue il benchmark di un server per Postgres.
+
+== multibonnie++
 
 Bonnie++ is a gret benchmark tool to measure read and write capacity of your hard disk.
+Bonnie++ è un ottimo strumento per benchmark, utile
+a misurare la capacità di un disco per opearzioni di lettura
+e scrittura.
 
-With this script, you can execute bonnie++ n times, each n changing the scheduler.
+Grazie a questo script, è possibile eseguire bonnie++ *n* volte,
+eventualmente cambiando _scheduler_ ogni volta.
 
-After the script finished, you will have a HTML file which contains a nice looking chart,
-made using Google Chart Tools.
+Dopo che lo script ha finito il suo lavoro, otterrai un file HTML
+che contiene grafici dell'andamento del benchmark, realizzati con
+i link:https://developers.google.com/chart[Google Chart Tools].
 
 [IMPORTANT]
-You need a working Internet connection to see the resulting chart
+Avrai bisogno di una connessione Internet funzionante per vedere il grafico risultante
 
-== Requirements
+=== Requisiti
 
 * bonnie++
 
